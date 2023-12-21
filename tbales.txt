@@ -1,0 +1,58 @@
+mysql> select * from department;
++------+---------+
+| dno  | dname   |
++------+---------+
+| 1001 | Bsc(CS) |
+| 1002 | BCA     |
+| 1003 | BCom    |
+| 1004 | BBA     |
++------+---------+
+4 rows in set (0.00 sec)
+
+
+mysql> create table stud(sno int primary key auto_increment,sname varchar(50),class text,email text,mob numeric,username text,password text,dept_no int references department(dno) ON DELETE CASCADE ON UPDATE SET NULL);
+
+mysql> create table faculty(fno int primary key auto_increment,fname varchar(50),email text,mob numeric,username text,password text,dept_no int references department(dno) ON DELETE CASCADE ON UPDATE SET NULL);
+
+
+
+mysql> create table events(eno int primary key auto_increment,ename text,from_date date,to_date date,from_time time,to_time time,fees numeric,faculty_no int references faculty(fno) ON DELETE CASCADE ON UPDATE SET NULL);
+
+
+
+mysql> create table registration(rno int primary key auto_increment,stud_no int references stud(sno) ON DELETE CASCADE ON UPDATE SET NULL,event_no int references events(eno) ON DELETE CASCADE ON UPDATE SET NULL);
+
+
+
+mysql> select stud.sid,stud.sname,stud.email,stud.mob_no,stud.class,sports.sp_name,sports.date from registration,stud,sports where stud.sid=registration.sid and sports.sno=registration.sno and rno=1;
++-----+-------+-----------------+------------+-------+------------+------------+
+| sid | sname | email           | mob_no     | class | sp_name    | date       |
++-----+-------+-----------------+------------+-------+------------+------------+
+|   1 | Ankit | ankit@gmail.com | 9988776655 | TY    | Relay Race | 2021-05-10 |
++-----+-------+-----------------+------------+-------+------------+------------+
+
+
+
+
+mysql> select stud.sid,stud.sname,stud.class,dept.d_name from registration,stud,sports,dept where stud.sid=registration.sid and sports.sno=registration.sno and dept.dno=stud.dno and sports.sp_name='Relay';
++-----+-------+-------+--------+
+| sid | sname | class | d_name |
++-----+-------+-------+--------+
+|  14 | Alia  | FY    | BSC    |
+|  26 | swati | FY    | BSC    |
++-----+-------+-------+--------+
+2 rows in set (0.02 sec)
+
+mysql> select stud.sid,stud.sname,stud.class,dept.d_name from registration,stud,sports,dept where stud.sid=registration.sid and sports.sno=registration.sno and dept.dno=stud.dno and sports.sp_name='Kabbaddi';
+Empty set (0.00 sec)
+
+mysql> select stud.sid,stud.sname,stud.class,dept.d_name from registration,stud,sports,dept where stud.sid=registration.sid and sports.sno=registration.sno and dept.dno=stud.dno and sports.sp_name='Badminton';
++-----+----------+-------+--------+
+| sid | sname    | class | d_name |
++-----+----------+-------+--------+
+|  21 | Gurpreet | TY    | BSC    |
++-----+----------+-------+--------+
+1 row in set (0.00 sec)
+
+
+mysql> select stud.sid,stud.sname,stud.class,dept.d_name,sports.sp_name,sports.date from stud,sports,registration,dept where stud.sid=registration.sid and sports.sno and registration.sno and stud.dno=dept.dno and extract(year from(date))=2021;
